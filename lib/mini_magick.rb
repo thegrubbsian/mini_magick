@@ -215,11 +215,11 @@ module MiniMagick
       when "original_at"
         # Get the EXIF original capture as a Time object
         Time.local(*self["EXIF:DateTimeOriginal"].split(/:|\s+/)) rescue nil
+      when /^EXIFRAW\:/i
+        result = run_command('identify', '-format', "\"%[#{value}]\"", escaped_path).chop
       when /^EXIF\:/i
         result = run_command('identify', '-format', "\"%[#{value}]\"", escaped_path).chop
-        if value =~ /\:RAW$/i
-          result
-        elsif result.include?(",")
+        if result.include?(",")
           read_character_data(result)
         else
           result
