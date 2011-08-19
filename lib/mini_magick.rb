@@ -217,11 +217,13 @@ module MiniMagick
         Time.local(*self["EXIF:DateTimeOriginal"].split(/:|\s+/)) rescue nil
       when /^EXIF\:/i
         result = run_command('identify', '-format', "\"%[#{value}]\"", escaped_path).chop
-        # if result.include?(",")
-        #   read_character_data(result)
-        # else
+        if value =~ /\:RAW$/i
           result
-        # end
+        elsif result.include?(",")
+          read_character_data(result)
+        else
+          result
+        end
       else
         run_command('identify', '-format', "\"#{value}\"", escaped_path).split("\n")[0]
       end
